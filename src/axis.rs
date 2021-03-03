@@ -10,7 +10,7 @@ use embedded_graphics::{
 };
 use crate::range_conv::Scalable;
 
-
+/// Used to provide alignment of an axis, it will be drown exactly on the line marked by the points
 pub enum Placement {
     X {
         x1: i32,
@@ -24,8 +24,13 @@ pub enum Placement {
     },
 }
 
+/// Used to describe how densely ticks should be drawn
 pub enum Scale {
+    /// Fixed scale means that ticks will be drawn between each increment of absolute distance provided.
+    /// for example, on range 0..30 and Fixed(10), ticks will be drawn for 0, 10 and 20
     Fixed(usize),
+    /// RangeFraction means that provided number of ticks ticks will be drawn on entire range
+    /// for example, on range 0..60 and RangeFraction(3), ticks will be drawn for 0, 20 and 40
     RangeFraction(usize),
 }
 
@@ -35,28 +40,37 @@ impl Default for Scale {
     }
 }
 
+/// Display-agnostic axis object, only contains scale range and title, can be converted to drawable axis for specific display
 pub struct Axis<'a> {
+    /// range that the scale will be drawn for
     range: Range<i32>,
+    /// axis title displayed right next to it
     title: Option<&'a str>,
+    /// Definition on how scale ticks should be drawn
     scale: Option<Scale>,
 }
 
+/// builder methods to modify axis decoration
 impl<'a> Axis<'a>
 {
+    /// create new axis data
     pub fn new(range: Range<i32>) -> Axis<'a> {
         Axis { range, title: None, scale: None }
     }
 
+    /// define how scale ticks should be drawn
     pub fn set_scale(mut self, scale: Scale) -> Axis<'a> {
         self.scale = Some(scale);
         self
     }
 
+    /// set axis title
     pub fn set_title(mut self, title: &'a str) -> Axis<'a> {
         self.title = Some(title);
         self
     }
 
+    /// turn axis data into drawable object suitable for specific display
     pub fn into_drawable_axis<C, F>(self, placement: Placement) -> DrawableAxis<'a, C, F>
         where
             C: PixelColor + Default,
@@ -74,6 +88,7 @@ impl<'a> Axis<'a>
     }
 }
 
+/// Drawable axis object, constructed for specific display
 pub struct DrawableAxis<'a, C, F>
     where
         C: PixelColor,
@@ -102,10 +117,14 @@ impl<'a, C, F> DrawableAxis<'a, C, F>
         self.text_style = Some(val);
         self
     }
+
+    /// set how wide tick should be drawn on the axis
     pub fn set_tick_size(mut self, val: usize) -> DrawableAxis<'a, C, F> {
         self.tick_size = Some(val);
         self
     }
+
+    /// set thickness of the main line of the axis
     pub fn set_thickness(mut self, val: usize) -> DrawableAxis<'a, C, F> {
         self.thickness = Some(val);
         self
@@ -119,6 +138,8 @@ impl<'a, C, F> Drawable<C> for DrawableAxis<'a, C, F>
         F: Font + Copy,
         TextStyle<C, F>: Clone + Default,
 {
+
+    /// most important function - draw the axis on the display
     fn draw<D: DrawTarget<C>>(self, display: &mut D) -> Result<(), D::Error> {
         let color = self.color.unwrap_or_default();
         let text_style = self.text_style.unwrap_or_default();

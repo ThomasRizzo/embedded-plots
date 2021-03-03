@@ -7,22 +7,31 @@ use crate::axis::{Scale, Placement, Axis};
 use embedded_graphics::style::TextStyleBuilder;
 use embedded_graphics::fonts::Font6x8;
 
+/// Display agnostic single curve plot object
 pub struct SinglePlot<'a> {
+    /// curve to be drawn on the plot
     curve: &'a Curve<'a>,
+    /// range of X axis on which curve will be drawn
     x_scale: Scale,
+    /// range of Y axis on which curve will be drawn
     y_scale: Scale,
 }
 
 impl<'a> SinglePlot<'a> {
+    /// create SinglePlot object with manual range
     pub fn new(curve: &'a Curve<'a>, x_scale: Scale, y_scale: Scale) -> SinglePlot {
         SinglePlot { curve, x_scale, y_scale }
     }
 
+    //TODO: add auto range plot constructor
+
+    /// convert to drawable form for specific display
     pub fn into_drawable<C: PixelColor + Default>(self, top_left: Point, bottom_right: Point) -> DrawableSinglePlot<'a, C> {
         DrawableSinglePlot { plot: self, color: None, text_color: None, axis_color: None, thickness: None, axis_thickness: None, top_left, bottom_right }
     }
 }
 
+/// Drawable single plot object, constructed for specific display
 pub struct DrawableSinglePlot<'a, C>
     where
         C: PixelColor + Default,
@@ -37,6 +46,7 @@ pub struct DrawableSinglePlot<'a, C>
     bottom_right: Point,
 }
 
+/// builder methods to modify plot decoration
 impl<'a, C> DrawableSinglePlot<'a, C>
     where
         C: PixelColor + Default,
@@ -46,25 +56,31 @@ impl<'a, C> DrawableSinglePlot<'a, C>
         self
     }
 
+    /// if not set, main color will be used
     pub fn set_text_color(mut self, color: C) -> DrawableSinglePlot<'a, C> {
         self.text_color = Some(color);
         self
     }
 
+    /// if not set, main color will be used
     pub fn set_axis_color(mut self, color: C) -> DrawableSinglePlot<'a, C> {
         self.axis_color = Some(color);
         self
     }
 
+    /// set curve thickness
     pub fn set_thickness(mut self, thickness: usize) -> DrawableSinglePlot<'a, C> {
         self.thickness = Some(thickness);
         self
     }
 
+    ///set axis thickness
     pub fn set_axis_thickness(mut self, thickness: usize) -> DrawableSinglePlot<'a, C> {
         self.axis_thickness = Some(thickness);
         self
     }
+
+    //TODO: add axis ticks thickness
 
 }
 
@@ -72,6 +88,7 @@ impl<'a, C> Drawable<C> for DrawableSinglePlot<'a, C>
     where
         C: PixelColor + Default,
 {
+    /// most important function - draw the plot on the display
     fn draw<D: DrawTarget<C>>(self, display: &mut D) -> Result<(), D::Error> {
         let color = self.color.unwrap_or_default();
         let text_color = self.text_color.unwrap_or(color);

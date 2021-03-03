@@ -10,23 +10,27 @@ use embedded_graphics::pixelcolor::{PixelColor};
 use embedded_graphics::primitives::{Line, Primitive};
 use embedded_graphics::style::PrimitiveStyle;
 
-
+/// representation of the single point on the curve
 pub struct PlotPoint {
     pub x: i32,
     pub y: i32,
 }
 
+/// curve object that contains data to be plotted
 pub struct Curve<'a> {
+    /// slice of points to be drawn
     points: &'a [PlotPoint],
     pub x_range: Range<i32>,
     pub y_range: Range<i32>,
 }
 
 impl<'a> Curve<'a> {
+    /// create new curve data with manual ranges
     pub fn new(points: &'a [PlotPoint], x_range: Range<i32>, y_range: Range<i32>) -> Curve {
         Curve { points, x_range, y_range }
     }
 
+    /// create new curve data with ranges automatically deducted based on provided points
     pub fn from_data(points: &'a [PlotPoint]) -> Curve {
         let x_range = match points
             .iter()
@@ -46,6 +50,7 @@ impl<'a> Curve<'a> {
         Curve { points, x_range, y_range }
     }
 
+    /// create curve that can be drawed on specific display
     pub fn into_drawable_curve<C>(&self,
                                   top_left: &'a Point,
                                   bottom_right: &'a Point,
@@ -76,6 +81,7 @@ impl<'a> Curve<'a> {
     }
 }
 
+/// Drawable curve object, constructed for specific display
 pub struct DrawableCurve<C, I>
 {
     scaled_data: I,
@@ -83,15 +89,19 @@ pub struct DrawableCurve<C, I>
     thickness: Option<usize>,
 }
 
+/// builder methods to modify curve decoration
 impl<C, I> DrawableCurve<C, I>
     where
         C: PixelColor,
         I: Iterator<Item=Point>,
 {
+    /// set curve color
     pub fn set_color(mut self, color: C) -> DrawableCurve<C, I> {
         self.color = Some(color);
         self
     }
+
+    /// set curve line thickness
     pub fn set_thickness(mut self, thickness: usize) -> DrawableCurve<C,I> {
         self.thickness = Some(thickness);
         self
@@ -102,6 +112,7 @@ impl<C, I> Drawable<C> for DrawableCurve<C, I>
     where C: PixelColor + Default,
           I: Iterator<Item=Point>,
 {
+    /// most important function - draw the curve on the display
     fn draw<D: DrawTarget<C>>(self, display: &mut D) -> Result<(), D::Error> {
         let color = match self.color {
             None => C::default(),
