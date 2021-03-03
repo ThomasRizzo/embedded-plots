@@ -121,7 +121,6 @@ fn main() -> Result<(), core::convert::Infallible> {
 
 
     let output_settings = OutputSettingsBuilder::new()
-        .pixel_spacing(1)
         .build();
     Window::new("Free axis", &output_settings).show_static(&display);
 
