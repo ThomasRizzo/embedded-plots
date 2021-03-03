@@ -1,0 +1,16 @@
+# todo: spin our own image
+image: registry.gitlab.com/mchodzikiewicz/embedded-plots-docker:latest
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script:
+    - cargo build
+
+test:
+  stage: test
+  script:
+    - cargo test
