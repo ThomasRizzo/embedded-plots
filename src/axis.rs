@@ -1,6 +1,6 @@
 use core::ops::Range;
 use core::fmt::Write;
-use heapless::{consts::*, String};
+use heapless::String;
 
 use embedded_graphics::{
     prelude::*,
@@ -173,7 +173,7 @@ impl<'a, C, F> Drawable<C> for DrawableAxis<'a, C, F>
                     Line { start: Point { x, y: y - tick_size as i32 }, end: Point { x, y: y + tick_size as i32 } }
                         .into_styled(PrimitiveStyle::with_stroke(color, thickness as u32))
                         .draw(display)?;
-                    let mut buf: String::<U8> = String::new();
+                    let mut buf: String::<8> = String::new();
                     write!(buf, "{}", mark).unwrap();
                     Text::new(&buf, Point { x: x + 2, y: y + 2 }).into_styled(text_style).draw(display)?;
                 }
@@ -189,7 +189,7 @@ impl<'a, C, F> Drawable<C> for DrawableAxis<'a, C, F>
                     Line { start: Point { x: x - tick_size as i32, y }, end: Point { x: x + tick_size as i32, y } }
                         .into_styled(PrimitiveStyle::with_stroke(color, thickness as u32))
                         .draw(display)?;
-                    let mut buf: String::<U8> = String::new();
+                    let mut buf: String::<8> = String::new();
                     write!(buf, "{}", mark).unwrap();
                     let tick_val = Text::new(&buf, Point { x, y }).into_styled(text_style);
                     let tick_val = tick_val.translate(Point { x: -(tick_val.size().width as i32) - 2, y: 2 });
