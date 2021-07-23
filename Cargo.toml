@@ -1,6 +1,6 @@
 [package]
 name = "embedded-plots"
-version = "0.1.2"
+version = "0.2.0"
 authors = ["Michał Chodzikiewicz <mchodzikiewicz@gmail.com>"]
 edition = "2018"
 license = "LGPL-2.1-only"
@@ -14,10 +14,10 @@ categories = ["embedded","visualization","no-std","graphics"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-embedded-graphics = "0.6.0"
-itertools = {version = "0.9.0", default-features = false}
+embedded-graphics = "0.7.1"
+itertools = {version = "0.9.0", default-features = false }
 heapless = "0.7.3"
 
 [dev-dependencies]
-embedded-graphics-simulator = "0.2.1"
+embedded-graphics-simulator = "0.3.0"
 test-case = "1.0.0"
