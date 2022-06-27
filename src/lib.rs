@@ -27,7 +27,7 @@
 //! use embedded_plots::axis::Scale;
 //! use embedded_graphics::geometry::{Point, Size};
 //! use embedded_graphics::pixelcolor::{RgbColor, Rgb565};
-//! use embedded_graphics::drawable::Drawable;
+//! use embedded_graphics::Drawable;
 //!
 //! //simulator dependencies, aka screen driver
 //! use embedded_graphics_simulator::SimulatorDisplay;
@@ -61,17 +61,18 @@
 //! ```rust
 //! use embedded_plots::axis::{Axis, Scale, Placement};
 //! use embedded_graphics::pixelcolor::{RgbColor, Rgb565};
-//! use embedded_graphics::drawable::Drawable;
+//! use embedded_graphics::Drawable;
 //! use embedded_graphics::geometry::Size;
 //!
 //! //simulator dependencies, aka screen driver
 //! use embedded_graphics_simulator::SimulatorDisplay;
-//! use embedded_graphics::style::TextStyleBuilder;
-//! use embedded_graphics::fonts::Font6x8;
+//! use embedded_graphics::mono_font::MonoTextStyleBuilder;
+//! use embedded_graphics::mono_font::ascii::FONT_5X8;
 //!
 //! let mut display: SimulatorDisplay<Rgb565> = SimulatorDisplay::new(Size::new(480, 272));
 //!
-//! let text_style_white = TextStyleBuilder::new(Font6x8)
+//! let text_style_white = MonoTextStyleBuilder::new()
+//!     .font(&FONT_5X8)
 //!     .text_color(RgbColor::WHITE)
 //!     .build();
 //! Axis::new(0..100)
@@ -109,8 +110,8 @@
 //! If you just want to help but don't have anything specific in mind, please take a look at [issue tracker](https://gitlab.com/mchodzikiewicz/embedded-plots/-/issues) and pick one.
 
 #![no_std]
-pub mod curve;
 pub mod axis;
+pub mod curve;
 /// plot that draws single data series
 pub mod single_plot;
 
