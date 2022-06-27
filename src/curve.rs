@@ -102,7 +102,7 @@ impl<C, I> DrawableCurve<C, I>
     }
 
     /// set curve line thickness
-    pub fn set_thickness(mut self, thickness: usize) -> DrawableCurve<C,I> {
+    pub fn set_thickness(mut self, thickness: usize) -> DrawableCurve<C, I> {
         self.thickness = Some(thickness);
         self
     }
@@ -123,22 +123,13 @@ impl<C, I> Drawable<C> for DrawableCurve<C, I>
             Some(t) => t,
         };
         let style = PrimitiveStyle::with_stroke(color, thickness as u32);
-        let mut iter = self.scaled_data.into_iter();
-        let mut prev = iter.next().unwrap();
-        for point in iter {
-            Line::new(prev, point)
-                .into_styled(style)
-                .draw(display)?;
-            prev = point;
-        }
-        Ok(())
+        self.scaled_data
+            .tuple_windows()
+            .try_for_each(|(prev, point)| -> Result<(), D::Error> {
+                Line::new(prev, point)
+                    .into_styled(style)
+                    .draw(display)
+            })
     }
 }
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}

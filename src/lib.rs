@@ -16,9 +16,9 @@
 //! ### Single plot
 //! Simple plot example
 //! #### On color display:
-//! ![single plot on color display](doc-resources/single-plot-color.png "Color plot of single curve")
+//! ![single plot on color display](https://gitlab.com/mchodzikiewicz/embedded-plots/-/raw/master/single-plot-color.png "Color plot of single curve")
 //! #### On monochromatic display:
-//! ![single plot on monochromatic display](doc-resources/single-plot-mono.png "Monochromatic plot of single curve")
+//! ![single plot on monochromatic display](https://gitlab.com/mchodzikiewicz/embedded-plots/-/raw/master/single-plot-mono.png "Monochromatic plot of single curve")
 //!
 //! Code to render:
 //! ```rust
@@ -56,7 +56,7 @@
 //!
 //! ### Axis
 //! You can also use axis on its own, it looks like this:
-//! ![free axis examples](doc-resources/free-axis-example.png "Free axis example")
+//! ![free axis examples](https://gitlab.com/mchodzikiewicz/embedded-plots/-/raw/master/doc-resources/free-axis-example.png "Free axis example")
 //! Code to render example axis:
 //! ```rust
 //! use embedded_plots::axis::{Axis, Scale, Placement};
