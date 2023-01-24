@@ -41,8 +41,10 @@
 //!     ];
 //! let curve = Curve::from_data(data.as_slice());
 //!
+//! let curves = [(curve, RgbColor::YELLOW)];
+//! 
 //! let plot = SinglePlot::new(
-//!     &curve,
+//!     &curves,
 //!     Scale::RangeFraction(3),
 //!     Scale::RangeFraction(2))
 //! .into_drawable(

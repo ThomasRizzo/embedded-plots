@@ -19,7 +19,8 @@ fn main() -> Result<(), core::convert::Infallible> {
     ];
 
     let curve = Curve::from_data(data.as_slice());
-    let plot = SinglePlot::new(&curve, Scale::RangeFraction(3), Scale::RangeFraction(2))
+    let curve_list = [(curve, BinaryColor::On)];
+    let plot = SinglePlot::new(&curve_list, Scale::RangeFraction(3), Scale::RangeFraction(2))
         .into_drawable(Point { x: 18, y: 2 }, Point { x: 120, y: 30 })
         .set_color(BinaryColor::On);
 

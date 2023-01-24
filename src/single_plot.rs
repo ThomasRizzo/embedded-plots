@@ -6,30 +6,33 @@ use embedded_graphics::{
 };
 /// Display agnostic single curve plot object
 #[derive(Clone, Copy)]
-pub struct SinglePlot<'a> {
+pub struct SinglePlot<'a, C>
+where
+    C: PixelColor + Default,
+{
     /// curve to be drawn on the plot
-    curve: &'a Curve<'a>,
+    curves: &'a [(Curve<'a>, C)],
     /// range of X axis on which curve will be drawn
     x_scale: Scale,
     /// range of Y axis on which curve will be drawn
     y_scale: Scale,
 }
-impl<'a> SinglePlot<'a> {
+impl<'a, C> SinglePlot<'a, C>
+where
+    C: PixelColor + Default,
+{
     /// create SinglePlot object with manual range
-    pub fn new(curve: &'a Curve<'a>, x_scale: Scale, y_scale: Scale) -> SinglePlot {
+    pub fn new(curves: &'a [(Curve<'a>, C)], x_scale: Scale, y_scale: Scale) -> SinglePlot<C> {
+        assert!(curves.len() > 0, "At least one curve must be given to SinglePlot constructor");
         SinglePlot {
-            curve,
+            curves,
             x_scale,
             y_scale,
         }
     }
     //TODO: add auto range plot constructor
     /// convert to drawable form for specific display
-    pub fn into_drawable<C: PixelColor + Default>(
-        self,
-        top_left: Point,
-        bottom_right: Point,
-    ) -> DrawableSinglePlot<'a, C> {
+    pub fn into_drawable(self, top_left: Point, bottom_right: Point) -> DrawableSinglePlot<'a, C> {
         DrawableSinglePlot {
             plot: self,
             color: None,
@@ -47,7 +50,7 @@ pub struct DrawableSinglePlot<'a, C>
 where
     C: PixelColor + Default,
 {
-    plot: SinglePlot<'a>,
+    plot: SinglePlot<'a, C>,
     color: Option<C>,
     text_color: Option<C>,
     axis_color: Option<C>,
@@ -104,7 +107,11 @@ where
         let thickness = self.thickness.unwrap_or(2);
         let axis_thickness = self.axis_thickness.unwrap_or(thickness);
         let text_style = MonoTextStyleBuilder::new().text_color(text_color).build();
-        Axis::new(self.plot.curve.x_range.clone())
+
+        let x_range = self.plot.curves[0].0.x_range.clone();
+        let y_range = self.plot.curves[0].0.y_range.clone();
+
+        Axis::new(x_range)
             .set_title("X")
             .set_scale(self.plot.x_scale)
             .into_drawable_axis(Placement::X {
@@ -117,7 +124,7 @@ where
             .set_tick_size(2)
             .set_thickness(axis_thickness)
             .draw(display)?;
-        Axis::new(self.plot.curve.y_range.clone())
+        Axis::new(y_range)
             .set_title("Y")
             .set_scale(self.plot.y_scale)
             .into_drawable_axis(Placement::Y {
@@ -130,12 +137,16 @@ where
             .set_tick_size(2)
             .set_thickness(axis_thickness)
             .draw(display)?;
-        self.plot
-            .curve
-            .into_drawable_curve(&self.top_left, &self.bottom_right)
-            .set_color(color)
-            .set_thickness(thickness)
-            .draw(display)?;
+
+        for curve in self.plot.curves {
+            curve
+                .0
+                .into_drawable_curve(&self.top_left, &self.bottom_right)
+                .set_color(curve.1)
+                .set_thickness(thickness)
+                .draw(display)?;
+        }
+
         Ok(())
     }
 }
