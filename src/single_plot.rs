@@ -22,12 +22,19 @@ where
     C: PixelColor + Default,
 {
     /// create SinglePlot object with manual range
-    pub fn new(curves: &'a [(Curve<'a>, C)], x_scale: Scale, y_scale: Scale) -> SinglePlot<C> {
-        assert!(curves.len() > 0, "At least one curve must be given to SinglePlot constructor");
-        SinglePlot {
-            curves,
-            x_scale,
-            y_scale,
+    pub fn new(
+        curves: &'a [(Curve<'a>, C)],
+        x_scale: Scale,
+        y_scale: Scale,
+    ) -> Result<SinglePlot<C>, &str> {
+        if curves.len() > 0 {
+            Err("No curves provided")
+        } else {
+            Ok(SinglePlot {
+                curves,
+                x_scale,
+                y_scale,
+            })
         }
     }
     //TODO: add auto range plot constructor
@@ -90,6 +97,7 @@ where
     }
     //TODO: add axis ticks thickness
 }
+
 impl<'a, C> Drawable for DrawableSinglePlot<'a, C>
 where
     C: PixelColor + Default,
@@ -139,12 +147,16 @@ where
             .draw(display)?;
 
         for curve in self.plot.curves {
-            curve
+            //TODO: how to handle errors here? Seems that we can only pass through DrawTarget error, not add our own.
+            // Use anyhow with no_std?
+            if let Ok(c) = curve
                 .0
                 .into_drawable_curve(&self.top_left, &self.bottom_right)
-                .set_color(curve.1)
-                .set_thickness(thickness)
-                .draw(display)?;
+            {
+                c.set_color(curve.1)
+                    .set_thickness(thickness)
+                    .draw(display)?
+            }
         }
 
         Ok(())

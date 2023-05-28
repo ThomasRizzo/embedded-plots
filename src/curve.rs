@@ -10,6 +10,7 @@ use embedded_graphics::{primitives::Line, primitives::PrimitiveStyle};
 use embedded_graphics::pixelcolor::PixelColor;
 
 /// representation of the single point on the curve
+#[derive(Clone, Copy)]
 pub struct PlotPoint {
     pub x: i32,
     pub y: i32,
@@ -59,14 +60,17 @@ impl<'a> Curve<'a> {
         &self,
         top_left: &'a Point,
         bottom_right: &'a Point,
-    ) -> DrawableCurve<C, impl Iterator<Item = Point> + Clone + '_>
+    ) -> Result<DrawableCurve<C, impl Iterator<Item = Point> + Clone + '_>, &str>
     where
         C: PixelColor,
     {
-        assert!(top_left.x < bottom_right.x);
-        assert!(top_left.y < bottom_right.y);
-        assert!(!self.x_range.is_empty());
-        assert!(!self.y_range.is_empty());
+        if 
+        (top_left.x > bottom_right.x)|
+        (top_left.y > bottom_right.y)|
+        self.x_range.is_empty()|
+        self.y_range.is_empty() {
+            return Err("Invalid range");
+        }
 
         let it = self.points.iter().map(move |p| Point {
             x: p.x.scale_between_ranges(
@@ -84,11 +88,11 @@ impl<'a> Curve<'a> {
                 },
             ),
         });
-        DrawableCurve {
+        Ok(DrawableCurve {
             scaled_data: it,
             color: None,
             thickness: None,
-        }
+        })
     }
 }
 

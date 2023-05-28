@@ -192,8 +192,8 @@ where
                     }
                     .into_styled(PrimitiveStyle::with_stroke(color, thickness as u32))
                     .draw(display)?;
-                    let mut buf: String<8> = String::new();
-                    write!(buf, "{}", mark).unwrap();
+                    let mut buf: String<11> = String::new();
+                    write!(buf, "{}", mark).ok();
                     Text::with_text_style(
                         &buf,
                         Point { x: x + 2, y: y + 2 },
@@ -234,8 +234,8 @@ where
                     }
                     .into_styled(PrimitiveStyle::with_stroke(color, thickness as u32))
                     .draw(display)?;
-                    let mut buf: String<8> = String::new();
-                    write!(buf, "{}", mark).unwrap();
+                    let mut buf: String<11> = String::new();
+                    write!(buf, "{}", mark).ok();
                     let tick_val = Text::with_text_style(
                         &buf,
                         Point { x, y },
