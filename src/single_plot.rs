@@ -27,7 +27,7 @@ where
         x_scale: Scale,
         y_scale: Scale,
     ) -> Result<SinglePlot<C>, &str> {
-        if curves.len() > 0 {
+        if curves.len() < 1 {
             Err("No curves provided")
         } else {
             Ok(SinglePlot {
