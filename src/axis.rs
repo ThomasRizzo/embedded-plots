@@ -144,10 +144,10 @@ where
         let character_style = MonoTextStyle::new(&FONT_5X8, color);
 
         let scale_marks = match self.axis.scale.unwrap_or_default() {
-            Scale::Fixed(interval) => self.axis.range.clone().into_iter().step_by(interval),
+            Scale::Fixed(interval) => self.axis.range.clone().into_iter().step_by(interval.max(1)),
             Scale::RangeFraction(fraction) => {
                 let len = self.axis.range.len();
-                self.axis.range.clone().into_iter().step_by(len / fraction)
+                self.axis.range.clone().into_iter().step_by((len / fraction).max(1))
             }
         };
         match self.placement {
